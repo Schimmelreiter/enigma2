@@ -578,19 +578,27 @@ void eDVBLocalTimeHandler::updateTime( time_t tp_time, eDVBChannel *chan, int up
 
 		if ( time_difference )
 		{
-			eDebug("[eDVBLocalTimerHandler] set Linux Time");
-			timeval tnow;
-			gettimeofday(&tnow,0);
-			tnow.tv_sec=t;
-			settimeofday(&tnow,0);
+			if ( (time_difference >= -120) && (time_difference <= 120) ) // Small diffs shall be slewed rather than stepped
+			{
+				eDebug("[eDVBLocalTimerHandler] slew Linux Time by %03d seconds", time_difference);
+				timeval tdelta;
+				tdelta.tv_sec=time_difference;
+				adjtime(&tdelta,0);
+			} else {
+				eDebug("[eDVBLocalTimerHandler] set Linux Time");
+				timeval tnow;
+				gettimeofday(&tnow,0);
+				tnow.tv_sec=t;
+				settimeofday(&tnow,0);
 #ifdef DEBUG
-			linuxTime=time(0);
-			localtime_r(&linuxTime, &now);
-			eDebug("[eDVBLocalTimerHandler] time after update is %02d:%02d:%02d",
-			now.tm_hour,
-			now.tm_min,
-			now.tm_sec);
+				linuxTime=time(0);
+				localtime_r(&linuxTime, &now);
+				eDebug("[eDVBLocalTimerHandler] time after update is %02d:%02d:%02d",
+				now.tm_hour,
+				now.tm_min,
+				now.tm_sec);
 #endif
+			}
 		}
 
  		 /*emit*/ m_timeUpdated();

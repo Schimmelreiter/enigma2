@@ -580,10 +580,14 @@ void eDVBLocalTimeHandler::updateTime( time_t tp_time, eDVBChannel *chan, int up
 		{
 			if ( (time_difference >= -120) && (time_difference <= 120) ) // Small diffs shall be slewed rather than stepped
 			{
-				eDebug("[eDVBLocalTimerHandler] slew Linux Time by %03d seconds", time_difference);
 				timeval tdelta;
 				tdelta.tv_sec=time_difference;
-				adjtime(&tdelta,0);
+				int rc=adjtime(&tdelta,0);
+				if(rc==0) {
+					eDebug("[eDVBLocalTimerHandler] slew Linux Time by %03d seconds", time_difference);
+				} else {
+					eDebug("[eDVBLocalTimerHandler] slew Linux Time by %03d seconds FAILED", time_difference);
+				}
 			} else {
 				eDebug("[eDVBLocalTimerHandler] set Linux Time");
 				timeval tnow;

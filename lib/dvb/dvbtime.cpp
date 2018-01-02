@@ -590,7 +590,7 @@ void eDVBLocalTimeHandler::updateTime( time_t tp_time, eDVBChannel *chan, int up
 				}
 				if ( it != m_timeOffsetMap.end() ) {
 					m_timeOffsetMap[chan->getChannelID()] = m_timeOffsetMap[chan->getChannelID()] + tolddelta.tv_sec;
-					eDebug("[eDVBLocalTimerHandler] Stored correction adjusted by old slew delta (%d seconds) to %d", t_olddelta.tv_sec, m_timeOffsetMap[chan->getChannelID()]);
+					eDebug("[eDVBLocalTimerHandler] Stored correction adjusted by old slew delta (%d seconds) to %d", tolddelta.tv_sec, m_timeOffsetMap[chan->getChannelID()]);
 				}
 			} else {
 				eDebug("[eDVBLocalTimerHandler] set Linux Time");
